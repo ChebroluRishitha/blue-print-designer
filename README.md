@@ -87,3 +87,13 @@ blue-print-designer/
     ├── estimator.js            # Material quantity and price math
     └── exports.js              # SVG, PNG, and JSON file exporters
 ```
+
+---
+
+## ⚠️ Limitations
+
+- **Geometric Boundaries**: The layout generator only supports simple rectangular room divisions within standard 1–4 BHK templates. Irregular plot geometry, curves, and multi-story/duplex modeling are not supported.
+- **Rule-Based Routing**: MEP lines (piping, conduits, ducts) are mapped using simple grid alignment rules rather than physical simulation models, meaning they do not bypass custom obstacle intersections.
+- **Static Material Rates**: Material unit prices (for cement, steel, bricks, etc.) are fixed local state values rather than being retrieved dynamically from market APIs, ignoring inflation or regional tax differences.
+- **Lack of 3D Previews**: The application operates entirely in a 2D canvas workspace. Real-time 3D walkthroughs or BIM rendering integrations are not supported.
+
