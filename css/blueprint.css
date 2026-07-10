@@ -1,0 +1,303 @@
+/* ==========================================================================
+   BLUEPRINT PRO - CAD BLUEPRINT CANVAS & VECTOR LAYERS
+   ========================================================================== */
+
+/* SVG CAD Frame Styles */
+.svg-viewport-wrapper {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  overflow: hidden;
+  background-color: #05080f; /* Pitch dark blue */
+}
+
+.svg-viewport-wrapper:active {
+  cursor: grabbing;
+}
+
+#blueprint-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* CAD VECTOR GRAPHICS VECTOR STYLING (SVG CLASSES) */
+
+/* Outer boundaries and axes */
+.cad-plot-boundary {
+  fill: none;
+  stroke: #0ea5e9;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+}
+
+/* Structural walls */
+.cad-wall-outer {
+  fill: #111d33;
+  stroke: #38bdf8; /* Bright neon blueprint cyan */
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.cad-wall-inner {
+  fill: #0f1a2e;
+  stroke: #93c5fd; /* Light neon blueprint blue */
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+/* RCC Structural Pillars (Columns) */
+.cad-column {
+  fill: #ef4444; /* Bright structural red */
+  stroke: #f8fafc; /* Solid white outline */
+  stroke-width: 1.5;
+}
+
+.room-sensor-bg {
+  fill: transparent;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+.room-sensor-bg:hover {
+  fill: rgba(56, 189, 248, 0.05);
+}
+.room-sensor-bg.selected {
+  fill: rgba(56, 189, 248, 0.12);
+  stroke: rgba(56, 189, 248, 0.7);
+  stroke-width: 1.5;
+}
+
+/* Dimensions and Labels */
+.cad-dim-line {
+  stroke: #0284c7;
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+.cad-dim-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: #38bdf8;
+  text-anchor: middle;
+}
+
+.cad-label-room {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  fill: #f8fafc;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.cad-label-area {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--text-secondary);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* Architectural doors and windows */
+.cad-door-swing {
+  fill: none;
+  stroke: rgba(254, 240, 138, 0.4);
+  stroke-width: 1;
+  stroke-dasharray: 2 1;
+}
+
+.cad-door-leaf {
+  stroke: #fef08a;
+  stroke-width: 2.5;
+}
+
+.cad-window-frame {
+  fill: #0f172a;
+  stroke: #94a3b8;
+  stroke-width: 1.5;
+}
+
+.cad-window-glass {
+  stroke: #38bdf8;
+  stroke-width: 1;
+}
+
+/* Furniture blocks */
+.furniture-block {
+  fill: rgba(139, 92, 26, 0.18);
+  stroke: #8b5a1a;
+  stroke-width: 1.2;
+  opacity: 0.85;
+}
+
+.furniture-contour {
+  stroke: #8b5a1a;
+  fill: none;
+}
+
+/* Electrical layer overlay styles */
+.elec-light {
+  fill: rgba(245, 158, 11, 0.2);
+  stroke: var(--accent-amber);
+  stroke-width: 1.5;
+  cursor: pointer;
+  filter: url(#yellow-glow);
+}
+
+.elec-switch {
+  fill: #0f172a;
+  stroke: #fbbf24;
+  stroke-width: 1.5;
+  cursor: pointer;
+}
+
+.elec-wire {
+  fill: none;
+  stroke: #f59e0b;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  opacity: 0.85;
+}
+
+/* Plumbing layer overlay styles */
+.plumb-pipe-cold {
+  fill: none;
+  stroke: var(--accent-cyan);
+  stroke-width: 1.8;
+  filter: url(#cyan-glow);
+  opacity: 0.9;
+}
+
+.plumb-pipe-hot {
+  fill: none;
+  stroke: var(--accent-rose);
+  stroke-width: 1.8;
+  opacity: 0.9;
+}
+
+.plumb-pipe-drain {
+  fill: none;
+  stroke: #64748b;
+  stroke-dasharray: 4 3;
+  stroke-width: 1.8;
+}
+
+.plumb-shaft {
+  fill: #4c1d95;
+  stroke: var(--accent-purple);
+  stroke-width: 1.5;
+}
+
+.plumb-fitting {
+  fill: #1e293b;
+  stroke: var(--accent-cyan);
+  stroke-width: 1.2;
+}
+
+/* Ventilation layer overlay styles */
+.vent-flow-arrow {
+  fill: none;
+  stroke: var(--accent-emerald);
+  stroke-width: 2.2;
+  marker-end: url(#arrow);
+  filter: url(#green-glow);
+  stroke-dasharray: 6 2;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+.vent-text-ratio {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--accent-emerald);
+  font-weight: bold;
+}
+
+.drag-handle {
+  fill: #fff;
+  stroke: var(--accent-cyan);
+  stroke-width: 2;
+  cursor: move;
+}
+
+/* Balcony vector styles */
+.cad-balcony-railing {
+  stroke: var(--accent-purple);
+  stroke-width: 2px;
+  stroke-dasharray: 6 4;
+}
+
+/* Entrance Door glow & highlight styling */
+.cad-door-leaf[data-type="entrance"] {
+  stroke: var(--accent-amber) !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
+}
+
+.cad-door-swing[data-type="entrance"] {
+  stroke: rgba(245, 158, 11, 0.5) !important;
+  stroke-width: 2px !important;
+}
+
+/* Plant Styles */
+.furniture-plant-pot {
+  fill: #854d0e; /* Clay brown pot color */
+  stroke: #5f370e;
+  stroke-width: 1px;
+}
+
+.furniture-plant-leaf {
+  fill: #15803d; /* Rounded green leaf */
+  stroke: #166534;
+  stroke-width: 0.8px;
+  opacity: 0.9;
+}
+
+.furniture-plant-leaf-spiky {
+  stroke: #16a34a; /* Spiky spires green */
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+
+.furniture-plant-leaf-broad {
+  fill: #14532d; /* Monstera broad leaves */
+  stroke: #166534;
+  stroke-width: 1.2px;
+  opacity: 0.95;
+}
+
+/* Floating HUD Compass in Top Right */
+.hud-compass {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(15, 20, 34, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 78px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.compass-text {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--text-secondary);
+}
+
+.compass-n {
+  fill: var(--accent-rose); /* North text highlighted red */
+}

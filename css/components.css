@@ -1,0 +1,527 @@
+/* ==========================================================================
+   BLUEPRINT PRO - INSPECTOR SIDEBAR, QUANTITIES BREAKDOWN, AND COMPLIANCE
+   ========================================================================== */
+
+/* RIGHT SIDEBAR: INSPECTOR PANEL */
+.sidebar-inspector {
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tabs-header {
+  display: flex;
+  background-color: rgba(8, 12, 20, 0.5);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-secondary);
+  padding: 14px 0;
+  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+  background-color: rgba(20, 27, 45, 0.3);
+}
+
+/* Tab panes toggling */
+.tab-pane {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tab-pane.active {
+  display: flex;
+}
+
+/* Inspector section blocks */
+.inspector-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inspector-section h3 {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.placeholder-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 10px;
+  gap: 12px;
+}
+
+.placeholder-text i {
+  font-size: 1.8rem;
+  opacity: 0.5;
+}
+
+.placeholder-text p {
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Selected Room Card details */
+.selected-room-card h4 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  border-left: 3px solid var(--accent-cyan);
+  padding-left: 10px;
+}
+
+.inspector-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-card .label {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.metric-card .value {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Compliance bars indicators */
+.compliance-row {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.compliance-row:last-child {
+  margin-bottom: 0;
+}
+
+.compliance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--accent-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-error {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: var(--accent-rose);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.badge-info {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.progress-bar-wrapper {
+  height: 6px;
+  background-color: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background-color: var(--accent-cyan);
+  transition: width 0.3s ease;
+}
+
+#inspect-lighting-bar {
+  background-color: var(--accent-amber);
+}
+
+#inspect-vent-bar {
+  background-color: var(--accent-emerald);
+}
+
+.compliance-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.compliance-footer .target-val {
+  color: var(--text-muted);
+}
+
+/* Warnings and Checklist */
+.warnings-panel {
+  flex: 1;
+}
+
+.warning-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.warning-list li {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background-color: var(--bg-card);
+  border-left: 3px solid transparent;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.warning-list li.warn-check {
+  border-left-color: var(--accent-emerald);
+}
+
+.warning-list li.warn-check i {
+  color: var(--accent-emerald);
+  margin-top: 2px;
+}
+
+.warning-list li.warn-warning {
+  border-left-color: var(--accent-amber);
+}
+
+.warning-list li.warn-warning i {
+  color: var(--accent-amber);
+  margin-top: 2px;
+}
+
+.warning-list li.warn-danger {
+  border-left-color: var(--accent-rose);
+}
+
+.warning-list li.warn-danger i {
+  color: var(--accent-rose);
+  margin-top: 2px;
+}
+
+.warning-list li .warn-text {
+  flex: 1;
+}
+
+/* Quantities Tab Cost Card */
+.total-cost-card {
+  background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 24px 20px;
+}
+
+.total-cost-card .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.total-cost-card h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 6px 0;
+  font-family: var(--font-display);
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.15);
+}
+
+.total-cost-card .cost-note {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Material Quantity Breakdown Item list */
+.quantities-breakdown {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qty-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+
+.qty-item:hover {
+  border-color: var(--border-hover);
+}
+
+.qty-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qty-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.bg-cement { background-color: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+.bg-steel { background-color: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+.bg-bricks { background-color: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+.bg-sand { background-color: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+.bg-aggregate { background-color: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+.bg-tiles { background-color: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+.bg-paint { background-color: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+.bg-fittings { background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
+.bg-labor { background-color: rgba(100, 116, 139, 0.15); color: #e2e8f0; }
+
+.qty-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qty-calc {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.qty-cost {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.panel-action-container {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* STATUS BAR (BOTTOM) */
+.app-status-bar {
+  height: 32px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 20px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  z-index: 100;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-item span {
+  font-weight: 700;
+  color: #fff;
+}
+
+.status-right {
+  margin-left: auto;
+  color: var(--text-muted);
+}
+
+.text-yellow {
+  color: var(--accent-amber);
+}
+
+/* Header alert message pill */
+.mode-alert-header {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: rgba(15, 20, 34, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 480px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.mode-alert-header i {
+  color: var(--accent-cyan);
+}
+
+/* PRINT LAYOUT STYLING (High-Contrast Monochrome PDF Output) */
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background-color: #fff !important;
+    color: #000 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  .app-header, 
+  .sidebar-config, 
+  .sidebar-inspector, 
+  .floating-hud,
+  .app-status-bar {
+    display: none !important;
+  }
+  
+  .app-workspace {
+    display: block !important;
+    grid-template-columns: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  .canvas-workspace {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    background-color: #fff !important;
+    page-break-after: always;
+  }
+  
+  .svg-viewport-wrapper {
+    background-color: #fff !important;
+    border: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  #blueprint-canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 100% !important;
+  }
+  
+  #blueprint-canvas rect, 
+  #blueprint-canvas path, 
+  #blueprint-canvas circle {
+    stroke: #000 !important;
+  }
+  
+  .cad-wall-outer, 
+  .cad-wall-inner {
+    fill: #ccc !important;
+    stroke: #000 !important;
+  }
+  
+  .cad-dim-line {
+    stroke: #666 !important;
+  }
+  
+  .cad-dim-text, 
+  .cad-label-room {
+    fill: #000 !important;
+  }
+  
+  .cad-label-area {
+    fill: #333 !important;
+  }
+  
+  .cad-plot-boundary {
+    stroke: #000 !important;
+  }
+  
+  .furniture-block {
+    fill: #f0f0f0 !important;
+    stroke: #666 !important;
+    opacity: 1 !important;
+  }
+  
+  #layer-architecture, 
+  #layer-dimensions, 
+  #layer-labels {
+    display: block !important;
+  }
+  
+  .print-only-report {
+    display: block !important;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+}

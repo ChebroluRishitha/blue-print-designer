@@ -1,0 +1,9 @@
+/* ==========================================================================
+   BLUEPRINT PRO - CORE STYLESHEET MANAGER
+   Imports modular component-wise stylesheets for clean organization.
+   ========================================================================== */
+
+@import url('css/variables.css');
+@import url('css/layout.css');
+@import url('css/blueprint.css');
+@import url('css/components.css');

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BluePrint Pro | AI-Powered Civil Engineering Blueprint Designer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <script>
+    window.addEventListener('error', function(e) {
+      var div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.backgroundColor = '#ef4444';
+      div.style.color = '#fff';
+      div.style.padding = '20px';
+      div.style.zIndex = '999999';
+      div.style.fontFamily = 'monospace';
+      div.style.fontSize = '14px';
+      div.style.whiteSpace = 'pre-wrap';
+      div.innerHTML = '<strong>JS Error:</strong> ' + e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno + '\\n' + (e.error ? e.error.stack : '');
+      document.body.appendChild(div);
+    });
+  </script>
+  <!-- Header Bar -->
+  <header class="app-header">
+    <!-- Left column: Recenter and Export actions -->
+    <div class="header-actions" style="flex: 1; display: flex; justify-content: flex-start; gap: 12px; margin-left: 0;">
+      <button class="btn btn-outline" id="btn-reset-view" title="Recenter and Fit View">
+        <i class="fa-solid fa-arrows-to-eye"></i> Recenter
+      </button>
+      <button class="btn btn-primary" id="btn-print-pdf">
+        <i class="fa-solid fa-print"></i> Print / Save as PDF
+      </button>
+    </div>
+
+    <!-- Center column: architectural option selector -->
+    <div style="flex: 1.5; display: flex; justify-content: center; align-items: center;">
+      <div class="floating-hud hud-layers" style="position: static; transform: none; box-shadow: none; margin: 0;">
+        <button class="layer-btn active" data-layer="architecture" title="Architectural Layout">
+          <i class="fa-solid fa-door-open"></i> Architectural
+        </button>
+        <button class="layer-btn" data-layer="electrical" title="Electrical Wiring & Lighting">
+          <i class="fa-solid fa-bolt-lightning"></i> Electrical & Lux
+        </button>
+        <button class="layer-btn" data-layer="plumbing" title="Plumbing Networks">
+          <i class="fa-solid fa-faucet-drip"></i> Plumbing & Wet Walls
+        </button>
+        <button class="layer-btn" data-layer="ventilation" title="Ventilation & Cross Airflow">
+          <i class="fa-solid fa-wind"></i> Ventilation (NBC)
+        </button>
+      </div>
+    </div>
+
+    <!-- Right column: full alert message in a single line -->
+    <div style="flex: 1.2; display: flex; justify-content: flex-end; align-items: center;">
+      <div class="mode-alert-header" id="hud-mode-alert" style="white-space: nowrap; max-width: none; overflow: visible; text-overflow: clip;">
+        <i class="fa-solid fa-circle-info"></i> Click rooms to inspect civil dimensions, areas, and wall takeoff metrics.
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="app-workspace">
+    
+    <!-- Left Sidebar: Configuration Parameters -->
+    <aside class="sidebar-config">
+      <div class="panel-header">
+        <i class="fa-solid fa-sliders"></i>
+        <h2>Design Parameters</h2>
+      </div>
+
+      <div class="panel-section scrollable">
+        <!-- Plot Area Configurations -->
+        <div class="input-group-container">
+          <h3 class="section-title">Plot Dimensions</h3>
+          
+          <div class="input-group">
+            <div class="label-wrapper">
+              <label for="plot-area">Total Plot Area</label>
+              <span class="value-display" id="plot-area-val">1200 sq ft</span>
+            </div>
+            <input type="range" id="plot-area" min="400" max="3000" step="50" value="1200">
+          </div>
+
+          <div class="input-group">
+            <div class="label-wrapper">
+              <label for="aspect-ratio">Aspect Ratio (W : L)</label>
+              <span class="value-display" id="aspect-ratio-val">4:3 (1.33)</span>
+            </div>
+            <input type="range" id="aspect-ratio" min="0.7" max="1.8" step="0.05" value="1.33">
+          </div>
+
+          <div class="input-group">
+            <label for="plot-facing">Plot Facing Orientation</label>
+            <select id="plot-facing">
+              <option value="N" selected>North (Vastu Favorable)</option>
+              <option value="E">East (Morning Light)</option>
+              <option value="S">South (Winter Warmth)</option>
+              <option value="W">West (Airflow Inflow)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Room Configuration -->
+        <div class="input-group-container">
+          <h3 class="section-title">Room Specifications</h3>
+          
+          <div class="input-group">
+            <label for="bhk-count">BHK Configuration</label>
+            <div class="segmented-control">
+              <input type="radio" name="bhk-count" id="bhk-1" value="1">
+              <label for="bhk-1">1 BHK</label>
+              
+              <input type="radio" name="bhk-count" id="bhk-2" value="2" checked>
+              <label for="bhk-2">2 BHK</label>
+              
+              <input type="radio" name="bhk-count" id="bhk-3" value="3">
+              <label for="bhk-3">3 BHK</label>
+              
+              <input type="radio" name="bhk-count" id="bhk-4" value="4">
+              <label for="bhk-4">4 BHK</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="bath-count">Bathrooms</label>
+            <div class="segmented-control">
+              <input type="radio" name="bath-count" id="bath-1" value="1">
+              <label for="bath-1">1 Bath</label>
+              
+              <input type="radio" name="bath-count" id="bath-2" value="2" checked>
+              <label for="bath-2">2 Bath</label>
+              
+              <input type="radio" name="bath-count" id="bath-3" value="3">
+              <label for="bath-3">3 Bath</label>
+              
+              <input type="radio" name="bath-count" id="bath-4" value="4">
+              <label for="bath-4">4 Bath</label>
+            </div>
+          </div>
+
+          <!-- Hidden design style tracking input -->
+          <input type="hidden" id="design-style" value="modern">
+        </div>
+
+        <!-- Material Pricing (Collapsible Section) -->
+        <details class="material-pricing-details" open>
+          <summary class="section-title"><i class="fa-solid fa-coins"></i> Local Material Prices (₹)</summary>
+          <div class="pricing-inputs-container">
+            <div class="price-control-group">
+              <div class="price-label-row">
+                <label for="price-box-cement">Cement (per bag)</label>
+              </div>
+              <div class="price-input-row">
+                <input type="range" class="price-slider" id="price-slider-cement" min="250" max="700" step="5" value="420">
+                <div class="numeric-input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" class="price-box" id="price-box-cement" min="0" max="50000" value="420">
+                </div>
+              </div>
+            </div>
+
+            <div class="price-control-group">
+              <div class="price-label-row">
+                <label for="price-box-steel">Steel (per kg)</label>
+              </div>
+              <div class="price-input-row">
+                <input type="range" class="price-slider" id="price-slider-steel" min="40" max="120" step="1" value="70">
+                <div class="numeric-input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" class="price-box" id="price-box-steel" min="0" max="50000" value="70">
+                </div>
+              </div>
+            </div>
+
+            <div class="price-control-group">
+              <div class="price-label-row">
+                <label for="price-box-sand">Sand (per ton)</label>
+              </div>
+              <div class="price-input-row">
+                <input type="range" class="price-slider" id="price-slider-sand" min="1000" max="5000" step="50" value="2200">
+                <div class="numeric-input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" class="price-box" id="price-box-sand" min="0" max="50000" value="2200">
+                </div>
+              </div>
+            </div>
+
+            <div class="price-control-group">
+              <div class="price-label-row">
+                <label for="price-box-bricks">Bricks (per piece)</label>
+              </div>
+              <div class="price-input-row">
+                <input type="range" class="price-slider" id="price-slider-bricks" min="4" max="20" step="0.5" value="8">
+                <div class="numeric-input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" class="price-box" id="price-box-bricks" min="0" max="50000" step="0.1" value="8">
+                </div>
+              </div>
+            </div>
+
+            <div class="price-control-group">
+              <div class="price-label-row">
+                <label for="price-box-tiles">Tiles (per sq ft)</label>
+              </div>
+              <div class="price-input-row">
+                <input type="range" class="price-slider" id="price-slider-tiles" min="30" max="300" step="5" value="80">
+                <div class="numeric-input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" class="price-box" id="price-box-tiles" min="0" max="50000" value="80">
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+
+    </aside>
+
+    <!-- Center Section: Interactive Blueprint Canvas -->
+    <section class="canvas-workspace">
+
+
+      <!-- SVG Drawing Container -->
+      <div class="svg-viewport-wrapper" id="svg-wrapper">
+        <svg id="blueprint-canvas" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Blueprint grid pattern definition -->
+            <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1e293b" stroke-width="1" />
+              <path d="M 150 0 L 0 0 0 150" fill="none" stroke="#2a384e" stroke-width="1.5" />
+            </pattern>
+            <!-- Shadow glow filters for electrical layers -->
+            <filter id="yellow-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <!-- Glow for water -->
+            <filter id="cyan-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <!-- Glow for ventilation -->
+            <filter id="green-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            
+            <!-- Window marker definitions -->
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+            </marker>
+          </defs>
+          
+          <!-- Outer Grid overlay -->
+          <rect width="100%" height="100%" fill="url(#grid)" pointer-events="none" />
+          
+          <!-- Scalable layout elements group -->
+          <g id="zoom-group">
+            <g id="orientation-group">
+              <!-- Background base -->
+              <rect id="canvas-bg" width="1200" height="900" fill="transparent" />
+              
+              <!-- Plot Boundary -->
+              <rect id="plot-boundary" class="cad-plot-boundary" />
+              
+              <!-- Structural components layers -->
+              <g id="layer-architecture"></g>
+              <g id="layer-furniture"></g>
+              <g id="layer-ventilation" style="display: none;"></g>
+              <g id="layer-plumbing" style="display: none;"></g>
+              <g id="layer-electrical" style="display: none;"></g>
+              <g id="layer-dimensions"></g>
+              <g id="layer-labels"></g>
+              
+              <!-- Dynamic Drag Handle Overlay -->
+              <g id="drag-overlay" pointer-events="none"></g>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Canvas Navigation controls (HUD Zoom) -->
+      <div class="floating-hud hud-navigation">
+        <button id="btn-zoom-in" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+        <button id="btn-zoom-reset" title="Fit to screen"><i class="fa-solid fa-expand"></i></button>
+        <button id="btn-zoom-out" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+      </div>
+
+      <!-- SVG Compass HUD in Top Right -->
+      <div class="floating-hud hud-compass" id="compass-hud">
+        <svg width="70" height="70" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--border-color)" stroke-width="2" />
+          <circle cx="50" cy="50" r="40" fill="rgba(8, 12, 20, 0.6)" />
+          
+          <!-- Outer ticks -->
+          <line x1="50" y1="10" x2="50" y2="15" stroke="var(--text-muted)" stroke-width="2" />
+          <line x1="50" y1="85" x2="50" y2="90" stroke="var(--text-muted)" stroke-width="2" />
+          <line x1="10" y1="50" x2="15" y2="50" stroke="var(--text-muted)" stroke-width="2" />
+          <line x1="85" y1="50" x2="90" y2="50" stroke="var(--text-muted)" stroke-width="2" />
+          
+          <!-- N, E, S, W texts (Fixed with N on top) -->
+          <text x="50" y="24" class="compass-text compass-n" text-anchor="middle">N</text>
+          <text x="78" y="54" class="compass-text" text-anchor="middle">E</text>
+          <text x="50" y="82" class="compass-text" text-anchor="middle">S</text>
+          <text x="22" y="54" class="compass-text" text-anchor="middle">W</text>
+          
+          <!-- Needle group that rotates -->
+          <g id="compass-needle-group">
+            <!-- Dial needle -->
+            <polygon points="50,15 54,50 46,50" fill="var(--accent-rose)" />
+            <polygon points="50,85 54,50 46,50" fill="var(--text-muted)" />
+            <circle cx="50" cy="50" r="3.5" fill="#f8fafc" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Floating HUD Design Selectors on the Right -->
+      <div class="floating-hud hud-designs">
+        <button class="design-btn active" data-style="modern" title="Design 1: Modern Residential">
+          <i class="fa-solid fa-house-laptop"></i> Design 1
+        </button>
+        <button class="design-btn" data-style="vastu" title="Design 2: Traditional Vastu">
+          <i class="fa-solid fa-compass"></i> Design 2
+        </button>
+        <button class="design-btn" data-style="compact" title="Design 3: Compact Space">
+          <i class="fa-solid fa-compress"></i> Design 3
+        </button>
+        <button class="design-btn" data-style="luxury" title="Design 4: Luxury Villa">
+          <i class="fa-solid fa-crown"></i> Design 4
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Compliance Inspector & Quantities -->
+    <aside class="sidebar-inspector">
+      <!-- Tab Selector -->
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="inspector">
+          <i class="fa-solid fa-circle-check"></i> compliance
+        </button>
+        <button class="tab-btn" data-tab="quantities">
+          <i class="fa-solid fa-calculator"></i> civil estimate
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="tab-content scrollable">
+        
+        <!-- Tab 1: Inspector & Room Compliance -->
+        <div class="tab-pane active" id="tab-inspector">
+          <div class="inspector-section selected-room-card">
+            <h3>Selected Component</h3>
+            <div id="inspector-placeholder" class="placeholder-text">
+              <i class="fa-solid fa-hand-pointer"></i>
+              <p>Click on any room or fixture on the canvas to inspect its civil details.</p>
+            </div>
+            <div id="inspector-details" style="display: none;">
+              <h4 id="inspect-room-name">Living Room</h4>
+              <div class="inspector-metrics-grid">
+                <div class="metric-card">
+                  <span class="label">Calculated Area</span>
+                  <span class="value" id="inspect-room-area">240 sq ft</span>
+                </div>
+                <div class="metric-card">
+                  <span class="label">Type / Category</span>
+                  <span class="value" id="inspect-room-type">Residential</span>
+                </div>
+              </div>
+
+              <!-- Lighting Inspector -->
+              <div class="compliance-row" id="compliance-lighting">
+                <div class="compliance-header">
+                  <span>Lighting Compliance (Lux Levels)</span>
+                  <span class="badge badge-success" id="inspect-lighting-status">PASS</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar-fill" id="inspect-lighting-bar" style="width: 80%;"></div>
+                </div>
+                <div class="compliance-footer">
+                  <span id="inspect-lighting-curr">120 Lux Calculated</span>
+                  <span class="target-val" id="inspect-lighting-target">Target: 100 Lux</span>
+                </div>
+              </div>
+
+              <!-- Ventilation Inspector -->
+              <div class="compliance-row" id="compliance-ventilation">
+                <div class="compliance-header">
+                  <span>Ventilation Ratio (NBC Guideline)</span>
+                  <span class="badge badge-success" id="inspect-vent-status">PASS</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar-fill" id="inspect-vent-bar" style="width: 12%;"></div>
+                </div>
+                <div class="compliance-footer">
+                  <span id="inspect-vent-curr">12.5% Window-to-Floor</span>
+                  <span class="target-val">Target: &ge;10%</span>
+                </div>
+              </div>
+
+              <!-- Storage Inspector -->
+              <div class="compliance-row" id="compliance-storage">
+                <div class="compliance-header">
+                  <span>Storage Allocation</span>
+                  <span class="badge badge-info" id="inspect-storage-status">SUFFICIENT</span>
+                </div>
+                <div class="compliance-footer">
+                  <span id="inspect-storage-details">1 Built-in wardrobe (8 ft width)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overall Engineering Warnings -->
+          <div class="inspector-section warnings-panel">
+            <h3>Structural & Plumbing Checklist</h3>
+            <ul class="warning-list" id="checklist-items">
+              <!-- Dynamically populated by app.js -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Tab 2: Material Quantities & Budget Estimator -->
+        <div class="tab-pane" id="tab-quantities">
+          <div class="inspector-section total-cost-card">
+            <span class="label">Total Project Material Estimate</span>
+            <h2 id="total-cost-val">₹24,85,000</h2>
+            <p class="cost-note">*Excludes finishing items, interior decor, and land acquisition costs.</p>
+          </div>
+
+          <div class="inspector-section quantities-breakdown">
+            <h3>Detailed Material Estimates</h3>
+            
+            <!-- Cement Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-cement"><i class="fa-solid fa-fill-drip"></i></div>
+                <div>
+                  <h4 class="qty-name">Portland Cement</h4>
+                  <span class="qty-calc" id="qty-cement-desc">342 bags @ ₹420/bag</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-cement-cost">₹1,43,640</span>
+            </div>
+
+            <!-- Steel Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-steel"><i class="fa-solid fa-cubes-stack"></i></div>
+                <div>
+                  <h4 class="qty-name">Reinforcing Steel (TMT)</h4>
+                  <span class="qty-calc" id="qty-steel-desc">2,850 kg @ ₹70/kg</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-steel-cost">₹1,99,500</span>
+            </div>
+
+            <!-- Bricks Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-bricks"><i class="fa-solid fa-shapes"></i></div>
+                <div>
+                  <h4 class="qty-name">Red Clay Bricks</h4>
+                  <span class="qty-calc" id="qty-bricks-desc">14,200 pcs @ ₹8.00/pc</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-bricks-cost">₹1,13,600</span>
+            </div>
+
+            <!-- Sand Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-sand"><i class="fa-solid fa-mountain"></i></div>
+                <div>
+                  <h4 class="qty-name">Fine River Sand</h4>
+                  <span class="qty-calc" id="qty-sand-desc">42 tons @ ₹2,200/ton</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-sand-cost">₹92,400</span>
+            </div>
+
+            <!-- Aggregate Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-aggregate"><i class="fa-solid fa-gem"></i></div>
+                <div>
+                  <h4 class="qty-name">Coarse Aggregate</h4>
+                  <span class="qty-calc" id="qty-aggregate-desc">58 tons @ ₹1,600/ton</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-aggregate-cost">₹92,800</span>
+            </div>
+
+            <!-- Tiles Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-tiles"><i class="fa-solid fa-border-all"></i></div>
+                <div>
+                  <h4 class="qty-name">Flooring Tiles</h4>
+                  <span class="qty-calc" id="qty-tiles-desc">1,200 sq ft @ ₹80/sq ft</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-tiles-cost">₹96,000</span>
+            </div>
+
+            <!-- Paint Card -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-paint"><i class="fa-solid fa-paint-roller"></i></div>
+                <div>
+                  <h4 class="qty-name">Interior/Exterior Paint</h4>
+                  <span class="qty-calc" id="qty-paint-desc">92 Liters @ ₹250/L</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-paint-cost">₹23,000</span>
+            </div>
+
+            <!-- Plumbing/Electrical Cost Estimate -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-fittings"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <div>
+                  <h4 class="qty-name">MEP Fittings & Taps</h4>
+                  <span class="qty-calc">Pipes, wiring, fixture lumpsum</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-mep-cost">₹61,000</span>
+            </div>
+
+            <!-- Labor Estimate -->
+            <div class="qty-item">
+              <div class="qty-info">
+                <div class="qty-icon bg-labor"><i class="fa-solid fa-person-digging"></i></div>
+                <div>
+                  <h4 class="qty-name">Contractor & Labor Cost</h4>
+                  <span class="qty-calc">Excavation, bricklaying, concreting</span>
+                </div>
+              </div>
+              <span class="qty-cost" id="qty-labor-cost">₹3,00,000</span>
+            </div>
+          </div>
+          
+          <div class="panel-action-container">
+            <button class="btn btn-outline btn-block" id="btn-download-boq">
+              <i class="fa-solid fa-file-csv"></i> Download CSV Bill of Quantities
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Bottom CAD Status Bar -->
+  <footer class="app-status-bar">
+    <div class="status-item font-mono">
+      <i class="fa-solid fa-maximize"></i> Plot Size: <span id="status-plot-dims">40.0' x 30.0'</span>
+    </div>
+    <div class="status-item font-mono">
+      <i class="fa-solid fa-house-chimney"></i> Carpet Area: <span id="status-carpet">980 sq ft</span>
+    </div>
+    <div class="status-item font-mono">
+      <i class="fa-solid fa-border-top-left"></i> Built-up Area: <span id="status-built-up">1,080 sq ft</span>
+    </div>
+    <div class="status-item font-mono">
+      <i class="fa-solid fa-circle-exclamation text-yellow" id="status-warnings-indicator"></i> Warnings: <span id="status-warnings-count">0</span>
+    </div>
+    <div class="status-item status-right font-mono" id="status-cursor-coords">
+      X: 0.00 ft | Y: 0.00 ft
+    </div>
+  </footer>
+
+  <!-- Include App Scripts (Modular CAD Categories) -->
+  <script src="js/state.js"></script>
+  <script src="js/generator-core.js"></script>
+  <script src="js/generator-layout.js"></script>
+  <script src="js/generator-walls.js"></script>
+  <script src="js/generator-openings.js"></script>
+  <script src="js/generator-furniture.js"></script>
+  <script src="js/electrical.js"></script>
+  <script src="js/plumbing.js"></script>
+  <script src="js/ventilation.js"></script>
+  <script src="js/estimator.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/listeners.js"></script>
+  <script src="js/render-core.js"></script>
+  <script src="js/render-openings.js"></script>
+  <script src="js/render-furniture.js"></script>
+  <script src="js/render-mep.js"></script>
+  <script src="js/render-dims.js"></script>
+  <script src="js/drag.js"></script>
+  <script src="js/inspector.js"></script>
+  <script src="js/warnings.js"></script>
+  <script src="js/exports.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
